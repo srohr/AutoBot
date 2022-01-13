@@ -130,6 +130,7 @@ class MusicPlayer(EventEmitter, Serializable):
         self.autoplaylist = None
         self.state = MusicPlayerState.STOPPED
         self.skip_state = None
+        self.bypass_repeat = False
         self.karaoke_mode = False
 
         self._volume = bot.config.default_volume
@@ -159,6 +160,7 @@ class MusicPlayer(EventEmitter, Serializable):
         self.emit("entry-added", player=self, playlist=playlist, entry=entry)
 
     def skip(self):
+        self.bypass_repeat = True
         self._kill_current_player()
 
     def stop(self):
@@ -205,11 +207,13 @@ class MusicPlayer(EventEmitter, Serializable):
     def _playback_finished(self, error=None):
         entry = self._current_entry
 
-        if self.repeatsong:
+        # Only repeat if skip_flag is not set.
+        if self.repeatsong and not self.bypass_repeat:
             self.playlist.entries.appendleft(entry)
         elif self.loopqueue:
             self.playlist.entries.append(entry)
-        
+        self.bypass_repeat = False
+
         if self._current_player:
             self._current_player.after = None
             self._kill_current_player()
