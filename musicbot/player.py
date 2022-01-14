@@ -160,8 +160,7 @@ class MusicPlayer(EventEmitter, Serializable):
         self.emit("entry-added", player=self, playlist=playlist, entry=entry)
 
     def skip(self):
-        self.bypass_repeat = True
-        self._kill_current_player()
+        self._kill_current_player(bypass_repeat=True)
 
     def stop(self):
         self.state = MusicPlayerState.STOPPED
@@ -284,7 +283,8 @@ class MusicPlayer(EventEmitter, Serializable):
 
         self.emit("finished-playing", player=self, entry=entry)
 
-    def _kill_current_player(self):
+    def _kill_current_player(self, bypass_repeat=False):
+        self.bypass_repeat = bypass_repeat
         if self._current_player:
             try:
                 self._current_player.stop()
