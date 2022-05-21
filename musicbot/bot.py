@@ -3214,39 +3214,21 @@ class MusicBot(discord.Client):
             - num_skips
         )
 
-        if skips_remaining <= 0:
-            player.skip()  # check autopause stuff here
-            # @TheerapakG: Check for pausing state in the player.py make more sense
-            return Response(
-                self.str.get(
-                    "cmd-skip-reply-skipped-1",
-                    "Your skip for `{0}` was acknowledged.\nThe vote to skip has been passed.{1}",
-                ).format(
-                    current_entry.title,
-                    self.str.get("cmd-skip-reply-skipped-2", " Next song coming up!")
-                    if player.playlist.peek()
-                    else "",
-                ),
-                reply=True,
-                delete_after=20,
-            )
-
-        else:
-            # TODO: When a song gets skipped, delete the old x needed to skip messages
-            return Response(
-                self.str.get(
-                    "cmd-skip-reply-voted-1",
-                    "Your skip for `{0}` was acknowledged.\n**{1}** more {2} required to vote to skip this song.",
-                ).format(
-                    current_entry.title,
-                    skips_remaining,
-                    self.str.get("cmd-skip-reply-voted-2", "person is")
-                    if skips_remaining == 1
-                    else self.str.get("cmd-skip-reply-voted-3", "people are"),
-                ),
-                reply=True,
-                delete_after=20,
-            )
+        player.skip()  # check autopause stuff here
+        # @TheerapakG: Check for pausing state in the player.py make more sense
+        return Response(
+            self.str.get(
+                "cmd-skip-reply-skipped-1",
+                "Your skip for `{0}` was acknowledged. Skipping.{1}",
+            ).format(
+                current_entry.title,
+                self.str.get("cmd-skip-reply-skipped-2", " Next song coming up!")
+                if player.playlist.peek()
+                else "",
+            ),
+            reply=True,
+            delete_after=20,
+        )
 
     async def cmd_volume(self, message, player, new_volume=None):
         """
